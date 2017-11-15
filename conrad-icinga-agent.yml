@@ -3,7 +3,6 @@
   vars:
     icinga2_master_fqdn : 172.16.7.11
     icinga2_master_zone: Conrad
-    icinga2_master_endpoints: 
-      - vm-monitoring-oase-prod.c.de-ecom-1505-oase.internal
+    icinga2_master_endpoints: vm-monitoring-oase-prod.c.de-ecom-1505-oase.internal
   roles:
     - icinga-client
