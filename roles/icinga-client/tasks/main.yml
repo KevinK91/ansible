@@ -73,7 +73,7 @@
 - name: Deploy icinga2.conf file
   copy:
     src: files/icinga2.conf
-    dest: {{ icinga2_sysconf_dir }}/icinga2.conf
+    dest: "{{ icinga2_sysconf_dir }}/icinga2.conf"
     owner: icinga2
     group: icinga2
     mode: u=rw,g=r,o=r
@@ -81,7 +81,7 @@
 - name: Deploy zones.conf file
   template:
     src: templates/zones.conf.j2
-    dest: {{ icinga2_sysconf_dir }}/zones.conf
+    dest: "{{ icinga2_sysconf_dir }}/zones.conf"
     owner: icinga2
     group: icinga2
     mode: "u=rw,g=r,o=r"
@@ -89,7 +89,7 @@
 - name: Deploy api.conf file
   template:
     src: templates/api.conf.j2
-    dest: {{ icinga2_sysconf_dir }}/features-available/api.conf
+    dest: "{{ icinga2_sysconf_dir }}/features-available/api.conf"
     owner: icinga2
     group: icinga2
     mode: "u=rw,g=r,o=r"
