@@ -19,6 +19,12 @@
   with_items: "{{ icinga2_client_packages }}"
   become: yes
 
+- name: Enable api feature
+  command: icinga2 feature enable api
+  environment:
+    PATH: "{{ ansible_env.PATH }}:/sbin:/usr/sbin"    
+  become: yes
+
 - name: Create pki directory for Icinga2
   file:
     path: /etc/icinga2/pki
