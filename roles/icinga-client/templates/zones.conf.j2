@@ -1,0 +1,17 @@
+/** Icinga 2 Config - proposed by Icinga Director */
+
+object Endpoint "{{ inventory_hostname }}" {}
+object Endpoint "{{ icinga2_master_endpoints }}" {}
+
+object Zone "{{ icinga2_master_zone }}" {
+  endpoints = {{ icinga2_master_endpoints }}
+}
+
+object Zone "director-global" { global = true }
+
+object Zone "{{ inventory_hostname }}" {
+  endpoints = [ "{{ inventory_hostname }}" ]
+  parent = "master"
+  global = false
+}
+

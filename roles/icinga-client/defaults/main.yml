@@ -1,0 +1,18 @@
+---
+
+icinga2_plugin_dir: /usr/lib64/nagios/plugins
+icinga2_manubulon_plugin_dir: /usr/lib64/nagios/plugins
+
+icinga2_centos7_repo: https://packages.icinga.com/epel/icinga-rpm-release-7-latest.noarch.rpm
+
+icinga2_client_packages:
+  - nagios-plugins-all 
+  - icinga2
+
+icinga2_conf_dir: /etc/icinga2/icinga2
+icinga2_sysconf_dir: /etc/icinga2
+icinga2_install_prefix: /usr/sbin/icinga2
+icinga2_ca_dir: /var/lib/icinga2/ca
+icinga2_ssl_dir: /etc/icinga2/pki
+icinga2_ca_port: 5665
+
