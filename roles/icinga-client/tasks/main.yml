@@ -72,7 +72,7 @@
     icinga2 pki request \
       --host "{{ icinga2_master_fqdn }}" \
       --port "{{ icinga2_ca_port }}" \
-      --ticket "{{ icinga2_ca_ticket }}" \
+      --ticket "{{ icinga2_ca_ticket.stdout}}" \
       --key "{{ icinga2_ssl_dir }}/{{ inventory_hostname }}.key" \
       --cert "{{ icinga2_ssl_dir }}/{{ inventory_hostname }}.crt" \
       --trustedcert "{{ icinga2_ssl_dir }}/trusted-master.crt" \
