@@ -11,7 +11,7 @@ object Zone "director-global" { global = true }
 
 object Zone "{{ inventory_hostname }}" {
   endpoints = [ "{{ inventory_hostname }}" ]
-  parent = "master"
+  parent = "{{ icinga2_master_zone }}"
   global = false
 }
 
