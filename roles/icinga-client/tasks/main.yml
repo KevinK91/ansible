@@ -19,6 +19,16 @@
   with_items: "{{ icinga2_client_packages }}"
   become: yes
 
+- name: Create pki directory for Icinga2
+  file:
+    path: /etc/icinga2/pki
+    owner: icinga
+    group: icinga
+    state: directory
+    mode: 0750
+  become: yes
+  tags:
+    - icinga2-client-certificate
 
 - name: Create client certificate
   command: >
