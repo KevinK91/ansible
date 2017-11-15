@@ -1,11 +1,15 @@
 ---
 
-- name: Add icinga2 repository
+- name: Add Icinga2 repository
   yum_repository:
-    name: icinga2
-    description: Stable icinga2 repo
-    baseurl: https://packages.icinga.com/epel/icinga-rpm-release-7-latest.noarch.rpm
+    name: icinga
+    description: Icinga2 repository
+    baseurl: http://packages.icinga.org/epel/7Server/release
+    gpgkey: http://packages.icinga.org/icinga.key
+    gpgcheck: yes
   become: yes
+  tags:
+    - icinga2-packages
 
   
 - name: Install icinga2 with nagios plugins
