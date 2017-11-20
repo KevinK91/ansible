@@ -10,8 +10,8 @@
   uri:
     url: "http://{{ icinga2_master_fqdn }}/v1/objects/hosts/{{ inventory_hostname }}"
     method: POST
-    user: "{{ icinga2_api_user }}"
-    password: "{{ icinga2_api_password }}"
+    user: "{{ vault_icinga2_api_user }}"
+    password: "{{ vault_icinga2_api_password }}"
     body:
       templates: "{{ icinga2_template }}"
       attrs:
