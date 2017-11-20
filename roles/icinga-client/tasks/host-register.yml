@@ -12,6 +12,8 @@
     method: POST
     user: "{{ vault_icinga2_api_user }}"
     password: "{{ vault_icinga2_api_password }}"
+    headers:
+      Accept: "application/json"
     body:
       templates: "{{ icinga2_template }}"
       attrs:
