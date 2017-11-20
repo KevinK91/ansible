@@ -17,7 +17,7 @@
     body:
       templates: "{{ icinga2_template }}"
       attrs:
-        addres: "{{ ipaddress.stdout }}"
+        address: "{{ ipaddress.stdout }}"
         display_name: "{{ inventory_hostname }}"
     body_format: json
     status_code: 200
