@@ -1,0 +1,25 @@
+---
+
+- name: Gest ip adress
+  shell: hostname -i
+  register: ipaddress
+  tags:
+    - register-host
+
+- name: Register host on icinga2 master node
+  uri:
+    url: "http://{{ icinga2_master_fqdn }}/v1/objects/hosts/{{ inventory_hostname }}"
+    method: POST
+    user: {{ icinga2_api_user }}
+    password: {{ icinga2_api_password }}
+    body:
+      templates: {{ icinga2_template }}
+      attrs:
+        addres: {{ ipaddress.stdout }}
+        display_name: {{ inventory_hostname }} 
+    body_format: json
+    status_code: 200
+  tags:
+    - register-host
+
+
