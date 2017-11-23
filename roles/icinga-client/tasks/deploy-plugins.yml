@@ -1,0 +1,12 @@
+---
+
+- name: "Copying the war"
+  copy: 
+    src: "{{ item }}" 
+    dest: "/usr/lib64/nagios/plugins/"
+    owner: root 
+    group: root
+    mode: 0755
+  with_fileglob: "{{ plugin_dir }}"
+  tags:
+    - deploy-plugins

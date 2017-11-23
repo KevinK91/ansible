@@ -25,6 +25,9 @@
     PATH: "{{ ansible_env.PATH }}:/sbin:/usr/sbin"    
   become: yes
 
+- name: Deploy default Linux check which are not in the repository
+  import_tasks: deploy-plugins.yml
+
 - name: Create pki directory for Icinga2
   file:
     path: /etc/icinga2/pki
@@ -119,3 +122,4 @@
     name: icinga2
     state: restarted
   become: yes
+

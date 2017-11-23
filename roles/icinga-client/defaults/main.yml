@@ -16,3 +16,5 @@ icinga2_ca_dir: /var/lib/icinga2/ca
 icinga2_ssl_dir: /etc/icinga2/pki
 icinga2_ca_port: 5665
 
+plugin_dir: 
+  - "files/linux/*"
