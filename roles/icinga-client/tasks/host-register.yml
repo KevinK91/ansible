@@ -9,7 +9,7 @@
 
 - name: Check if host already exists
   uri:
-    url: "https://localhost/icingaweb2/director/host?=name{{inventory_hostname}}"
+    url: "https://localhost/icingaweb2/director/host?name={{inventory_hostname}}"
     method: GET
     user: "{{ vault_icinga2_api_user }}"
     password: "{{ vault_icinga2_api_password }}"
