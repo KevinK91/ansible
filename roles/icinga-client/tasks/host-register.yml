@@ -15,12 +15,11 @@
     headers:
       Accept: "application/json"
     body:
-      templates: "{{ icinga2_template }}"
+      address: "{{ ipaddress.stdout }}"
+      display_name: "{{ inventory_hostname }}"
+      imports: "{{ icinga2_template }}"
       object_name: "{{ inventory_hostname }}"
       object_type: "object"
-      attrs:
-        address: "{{ ipaddress.stdout }}"
-        display_name: "{{ inventory_hostname }}"
     body_format: json
     status_code: 201
     validate_certs: no
