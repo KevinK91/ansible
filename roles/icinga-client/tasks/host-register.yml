@@ -16,6 +16,8 @@
       Accept: "application/json"
     body:
       templates: "{{ icinga2_template }}"
+      object_name": "{{ inventory_hostname }}"
+      object_type": "object"
       attrs:
         address: "{{ ipaddress.stdout }}"
         display_name: "{{ inventory_hostname }}"
