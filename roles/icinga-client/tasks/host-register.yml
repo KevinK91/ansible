@@ -6,6 +6,19 @@
   tags:
     - register-host
 
+
+- name: Check if host already exists
+  uri:
+    url: "https://localhost/icingaweb2/director/host?=name{{inventory_hostname}}"
+    method: GET
+    user: "{{ vault_icinga2_api_user }}"
+    password: "{{ vault_icinga2_api_password }}"
+    headers:
+      Accept: "application/json"
+    validate_certs: no
+  delegate_to: "{{ icinga2_master_fqdn }}"
+  register: result
+
 - name: Register host on icinga2 master node
   uri:
     url: "https://localhost/icingaweb2/director/host"
@@ -24,6 +37,7 @@
     status_code: 201
     validate_certs: no
   delegate_to: "{{ icinga2_master_fqdn }}"
+  when: result.status != 200
   tags:
     - register-host
 
