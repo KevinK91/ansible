@@ -31,6 +31,7 @@
       address: "{{ ipaddress.stdout }}"
       display_name: "{{ inventory_hostname }}"
       imports: "{{ icinga2_template }}"
+      groups: "{{ icinga2_groups }}"
       object_name: "{{ inventory_hostname }}"
       object_type: "object"
     body_format: json
