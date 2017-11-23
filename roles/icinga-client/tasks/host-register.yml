@@ -18,6 +18,7 @@
     validate_certs: no
   delegate_to: "{{ icinga2_master_fqdn }}"
   register: result
+  failed_when: result.status != 200 or result.status != 404
 
 - name: Register host on icinga2 master node
   uri:
