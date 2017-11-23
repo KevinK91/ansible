@@ -8,7 +8,7 @@
 
 - name: Register host on icinga2 master node
   uri:
-    url: "https://{{ icinga2_master_fqdn }}/icingaweb2/director/host?{{ inventory_hostname }}"
+    url: "https://localhost/icingaweb2/director/host?{{ inventory_hostname }}"
     method: POST
     user: "{{ vault_icinga2_api_user }}"
     password: "{{ vault_icinga2_api_password }}"
@@ -22,12 +22,14 @@
     body_format: json
     status_code: 201
     validate_certs: no
+  delegate_to: "{{ icinga2_master_fqdn }}"
   tags:
     - register-host
 
+
 - name: Deploy config 
   uri:
-    url: "https://{{ icinga2_master_fqdn }}/icingaweb2/director/config/deploy"
+    url: "https://localhost/icingaweb2/director/config/deploy"
     method: POST
     user: "{{ vault_icinga2_api_user }}"
     password: "{{ vault_icinga2_api_password }}"
@@ -35,6 +37,7 @@
       Accept: "application/json"
     status_code: 200
     validate_certs: no
+  delegate_to: "{{ icinga2_master_fqdn }}"
   tags:
     - register-host
 
