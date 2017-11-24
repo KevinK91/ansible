@@ -18,5 +18,5 @@
     state: present
   become: yes
   with_items: "{{ plugin_dir }}"
-  when: item.value == "files/postgresql/*"
+  when: item.value == 'files/postgresql/*'
 
