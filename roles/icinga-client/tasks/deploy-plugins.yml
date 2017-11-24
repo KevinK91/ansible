@@ -17,6 +17,5 @@
     name: perl-Data-Dumper
     state: present
   become: yes
-  with_items: "{{ plugin_dir }}"
-  when: item == 'files/postgresql/*'
+  when: "postgresql" in plugin_dir
 
