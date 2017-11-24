@@ -8,5 +8,6 @@
     group: root
     mode: 0755
   with_fileglob: "{{ plugin_dir }}"
+  become: yes
   tags:
     - deploy-plugins
