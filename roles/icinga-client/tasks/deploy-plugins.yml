@@ -11,3 +11,11 @@
   become: yes
   tags:
     - deploy-plugins
+
+ - name: Install icinga2 with nagios plugins
+   yum:
+     name: "perl-Data-Dumper"
+     state: latest
+   become: yes
+   when: "files/postgresql/*" in plugin_dir  
+
