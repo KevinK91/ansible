@@ -5,7 +5,11 @@ sudo yum install check_postgres
 
 cp /usr/bin/check_postgres.pl <git files/postgresql directory>
 
-#Check git repository from https://github.com/justintime/nagios-plugins
+#Postgresql check from bucardo
 
 git clone https://github.com/justintime/nagios-plugins.git
 
+#Postgresql advanced one
+git clone https://github.com/OPMDG/check_pgactivity
+git checkout REL2_3
+cp check_pgactivity ../ansible/roles/icinga-client/files/postgresql
