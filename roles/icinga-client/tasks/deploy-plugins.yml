@@ -1,6 +1,6 @@
 ---
 
-- name: "Copying the war"
+- name: Deploy the plugins
   copy: 
     src: "{{ item }}" 
     dest: "/usr/lib64/nagios/plugins/"
@@ -18,5 +18,5 @@
     state: present
   become: yes
   with_items: "{{ plugin_dir }}"
-  when: item == "files/postgresql/*"
+  when: item.value == "files/postgresql/*"
 
