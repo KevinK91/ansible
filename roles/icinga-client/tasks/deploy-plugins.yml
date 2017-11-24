@@ -12,10 +12,10 @@
   tags:
     - deploy-plugins
 
- - name: Install icinga2 with nagios plugins
+ - name: Install dependencies for check_ postgresql.pl 
    yum:
-     name: "perl-Data-Dumper"
-     state: latest
+     name: perl-Data-Dumper
+     state: present
    become: yes
-   when: "files/postgresql/*" in plugin_dir  
+   #   when: "files/postgresql/*" in plugin_dir  
 
