@@ -1,0 +1,11 @@
+-- Centos 7 --
+#Source from check_postgres
+ADD postgres10 repository
+sudo yum install check_postgres
+
+cp /usr/bin/check_postgres.pl <git files/postgresql directory>
+
+#Check git repository from https://github.com/justintime/nagios-plugins
+
+git clone https://github.com/justintime/nagios-plugins.git
+
