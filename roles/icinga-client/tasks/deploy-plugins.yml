@@ -12,10 +12,10 @@
   tags:
     - deploy-plugins
 
- - name: Install dependencies for check_ postgresql.pl 
-   yum:
-     name: perl-Data-Dumper
-     state: present
-   become: yes
-   #   when: "files/postgresql/*" in plugin_dir  
+- name: Install dependencies for check_ postgresql.pl 
+  yum:
+    name: perl-Data-Dumper
+    state: present
+  become: yes
+  when: '"files/postgresql/*" in plugin_dir'
 
