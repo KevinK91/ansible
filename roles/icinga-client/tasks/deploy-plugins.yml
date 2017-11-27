@@ -38,6 +38,7 @@
     owner: icinga
     group: icinga
     mode: 0600
+    create: yes
   become: yes
 #  with_items: "{{ plugin_dir }}"
   when: plugin_dir | search("pgpool")
