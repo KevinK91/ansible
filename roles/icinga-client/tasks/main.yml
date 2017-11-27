@@ -2,6 +2,8 @@
 
 - name: Include vault variables
   include_vars: vault.yml
+  tags:
+    - deploy-plugins
 
 - name: Create host object in icinga2
   import_tasks: host-register.yml
