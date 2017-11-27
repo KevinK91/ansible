@@ -34,7 +34,8 @@
     mode: 0600
     create: yes
   become: yes
-  when: plugin_dir | search("pgpool")
+  with_items:  "{{ plugin_dir }}"
+  when: item | search("pgpool")
   tags:
     - deploy-plugins
   
