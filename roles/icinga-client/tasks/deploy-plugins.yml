@@ -38,6 +38,6 @@
     group: icinga
     mode: 0600
   become: yes
-  with_items: "{{ plugin_dir }}"
-  when: "pgpool" in item
+#  with_items: "{{ plugin_dir }}"
+  when: plugin_dir | search("pgpool")
   
