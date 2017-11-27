@@ -18,7 +18,8 @@
     name: perl-Data-Dumper
     state: present
   become: yes
-  when: plugin_dir | search("postgres")
+  with_items:  "{{ plugin_dir }}"
+  when: item | search("postgres")
   tags:
     - deploy-plugins
 
