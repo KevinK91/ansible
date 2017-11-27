@@ -12,6 +12,7 @@
   tags:
     - deploy-plugins
 
+#Postgresql related stuff
 - stat:
     path: /usr/lib64/nagios/plugins/check_postgres.pl
   register: st
@@ -26,4 +27,16 @@
   when: st.stat.exists == True
   tags:
     - deploy-plugins
- 
+
+#Pgpool specific stuff
+- name: Deploy password file for pgpool pcpcommand
+  lineinfile:
+    path: /var/spool/icinga2/.pcppass
+    state: present
+    line: '*:*:{{ vault_pcp_pgpool_user }}:{{ vault_pcp_pgpool_password }}'
+    owner: icinga
+    group: icinga
+    mode: 0600
+  become: yes
+  when: when: "pgpool" in plugin_dir
+  
