@@ -13,18 +13,11 @@
     - deploy-plugins
 
 #Postgresql related stuff
-#- stat:
-#    path: /usr/lib64/nagios/plugins/check_postgres.pl
-#  register: st
-#  tags:
-#    - deploy-plugins
-
 - name: Install dependencies for check_postgresql.pl 
   yum:
     name: perl-Data-Dumper
     state: present
   become: yes
-#  when: st.stat.exists == True
   when: plugin_dir | search("postgres")
   tags:
     - deploy-plugins
@@ -40,7 +33,6 @@
     mode: 0600
     create: yes
   become: yes
-#  with_items: "{{ plugin_dir }}"
   when: plugin_dir | search("pgpool")
   tags:
     - deploy-plugins
