@@ -10,15 +10,15 @@
 
 # get arguments
 
-while getopts 'w:c:hp' OPT; do
+while getopts 'w:c:hpHUPf:d:b:' OPT; do
   case $OPT in
     w)  int_warn=$OPTARG;;
     c)  int_crit=$OPTARG;;
     h)  hlp="yes";;
-    P)  perform="yes";;
+    p)  perform="yes";;
     H)  host=$OPTARG;;
     U)  user=$OPTARG;;
-    p)  port=$OPTARG;;
+    P)  port=$OPTARG;;
     f)  pcpfile=$OPTARG;;
     d)  pcpdir=$OPTARG;;
     b)  backendid=$OPTARG;;
@@ -35,10 +35,10 @@ HELP="
             -w --> Warning integer value
             -c --> Critical integer value
             -P --> print out performance data
-            -h --> print this help screen
-            -H --> hostname of the pgpool instance
+            -H --> print this help screen
+            -h --> hostname of the pgpool instance
                    Default hostname is localhost
-            -U --> user to connect to pgpool
+            -u --> user to connect to pgpool
                    Default user is pgpool
             -p --> pcp port of pgpool pcp
                    Default port is 9898
