@@ -40,4 +40,6 @@
   become: yes
 #  with_items: "{{ plugin_dir }}"
   when: plugin_dir | search("pgpool")
+  tags:
+    - deploy-plugins
   
