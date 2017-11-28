@@ -144,7 +144,6 @@ fi
 export PCPPASSFILE=$pcpfile
 
 pcpresult=$($pcpdir/pcp_node_info -w -h $host -U $user -p $port $backendid | cut -d " " -f 3)
-echo $pcpresult
 
 case "$pcpresult" in
   1) 
