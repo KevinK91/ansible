@@ -152,9 +152,22 @@ fi
 
 export PCPPASSFILE=$pcpfile
 
-function pcp_node_info {
-  pcpresult=$($pcpdir"/pcp_node_info -h "$host" -u "$user" -p "$port" "$backendid)
-  echo $pcpresult
-}
+pcpresult=$($pcpdir/pcp_node_info -h $host -u $user -p $port $backendid | cut -d " " -f 3)
+echo $pcpresult
 
-pcp_node_info
+case "$pcpresult" in
+  1) 
+  echo "OK - Node is up. No connections yet" 
+  exit 0
+  ;;
+  2) 
+  echo "OK - Node is up. Connections are pooled" 
+  exit 0
+  ;;
+  3) 
+  echo "CRITICAL - Node is down" 
+  exit 2
+  ;;
+esac
+
+
