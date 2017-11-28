@@ -16,7 +16,7 @@ OPTS=$(getopt -o hpH:U:P:wcf:d:b: -l help,perfdata,host,user,port,warning,critic
 
 if [ $? != 0 ] ; then echo "Failed parsing options." >&2 ; exit 1 ; fi
 
-echo "$OPTS"
+#echo "$OPTS"
 eval set -- "$OPTS"
 
 perform=false
