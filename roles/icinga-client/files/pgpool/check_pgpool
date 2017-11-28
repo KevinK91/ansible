@@ -1,0 +1,174 @@
+#!/bin/bash
+#
+# evaluate free system memory from Linux based systems
+#
+# Date: 2007-11-12
+# Author: Thomas Borger - ESG
+#
+# the memory check is done with following command line:
+# free -m | grep buffers/cache | awk '{ print $4 }'
+
+# get arguments
+
+#The warning and critical argument is currently not used
+set -o errexit -o noclobber -o nounset -o pipefail
+OPTS=$(getopt -o hpH:U:P:wcf:d:b: -l help,perfdata,host,user,port,warning,critical,pcpfile:,pcpdir:,backendid: --name "$0" -- "$@")
+
+if [ $? != 0 ] ; then echo "Failed parsing options." >&2 ; exit 1 ; fi
+
+echo "$OPTS"
+eval set -- "$OPTS"
+
+perform=false
+hlp=false
+host="localhost"
+user="pgpool"
+port=9898
+int_warn=1
+int_crit=2
+pcpfile=""
+pcpdir="test"
+backendid=0
+
+while true; do
+  case "$1" in
+    -h|--help)  
+        hlp=true
+        shift
+        shift
+        ;;
+    -p|--perdata)
+        perform=true
+        shift
+        shift
+        ;;
+    -H|--host)
+        host=$2
+        shift
+        shift
+        ;;
+    -U|--user)
+        user=$2
+        shift
+        shift
+        ;;
+    -P|--port)
+        port=$2
+        shift
+        shift
+        ;;
+    -w|--warning)
+        int_warn=$2
+        shift
+        shift
+        ;;
+    -c|--critical)
+        int_crit=$2
+        shift
+        shift
+        ;;
+    -f|--pcpfile)
+        pcpfile=$2
+        shift
+        shift
+        ;;
+    -d|--pcpdir)
+        pcpdir=$2
+        shift
+        shift
+        ;;
+    -b|--backendid)
+        backendid=$2
+        shift
+        shift
+        ;;
+    -- ) 
+        shift; 
+        break 
+        ;;
+    *)  
+        echo "Not implemented: $1" >&2
+        exit 1
+        ;;
+  esac
+done
+
+echo "$host"
+echo "$pcpfile"
+echo "$pcpdir"
+echo "$backendid"
+
+# usage
+HELP="
+    usage: $0 [ -w value -c value -p -h ]
+
+    syntax:
+
+            -p --> print out performance data
+            -h --> print this help screen
+            -H --> hostname of the pgpool instance
+                   Default hostname is localhost
+            -U --> user to connect to pgpool
+                   Default user is pgpool
+            -P --> pcp port of pgpool pcp
+                   Default port is 9898
+            -w --> Warning integer value
+            -c --> Critical integer value
+            -f --> file which contains pcp password
+            -b --> backend ID for pgpool backend connection postgres
+            -d --> pcp directory file which contain the binaries
+"
+#Check Arguments and exit if they are not set
+if [ "$hlp" = "yes" ]; then
+  echo "$HELP"
+  exit 0
+fi
+
+if [ -z "$pcpdir" ]; then
+  echo "CRITICAL - -d --> pcp directory must be set"
+  echo "$HELP"
+  exit 2
+fi
+if [ -z "$pcpfile" ]; then
+  echo "CRITICAL - -p --> pcp file must be set"
+  echo "$HELP"
+  exit 2
+fi
+if [ -z "$backendid" ]; then
+  echo "CRITICAL - -b --> pcp backendid must be set"
+  echo "$HELP"
+  exit 2
+fi
+
+#Check arguments and set default values
+if [ -z "$host" ]; then
+  host="localhost"
+fi
+if [ -z "$user" ]; then
+  host="pgpool"
+fi
+if [ -z "$port" ]; then
+  host=9898
+fi
+
+export PCPPASSFILE=$pcpfile
+
+pcpresult=$($pcpdir/pcp_node_info -w -h $host -U $user -p $port $backendid | cut -d " " -f 3)
+echo $pcpresult
+
+case "$pcpresult" in
+  1) 
+  echo "OK - Node is up. No connections yet" 
+  exit 0
+  ;;
+  2) 
+  echo "OK - Node is up. Connections are pooled" 
+  exit 0
+  ;;
+  3) 
+  echo "CRITICAL - Node is down" 
+  exit 2
+  ;;
+esac
+
+
