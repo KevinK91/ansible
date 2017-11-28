@@ -21,14 +21,9 @@ eval set -- "$OPTS"
 
 perform=false
 hlp=false
-host="localhost"
 user="pgpool"
 port=9898
-int_warn=1
-int_crit=2
 pcpfile=""
-pcpdir="test"
-backendid=0
 
 while true; do
   case "$1" in
@@ -92,11 +87,6 @@ while true; do
         ;;
   esac
 done
-
-echo "$host"
-echo "$pcpfile"
-echo "$pcpdir"
-echo "$backendid"
 
 # usage
 HELP="
