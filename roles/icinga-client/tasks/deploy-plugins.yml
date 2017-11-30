@@ -13,6 +13,7 @@
     - deploy-plugins
 
 #Check_logfile perl dependencies stuff
+##This check only works for Centos 7 of Conrad google cloud instance
 - name: Install dependencies for check_logfile
   yum:
     name: perl-Digest-MD5
