@@ -12,6 +12,17 @@
   tags:
     - deploy-plugins
 
+#Check_logfile perl dependencies stuff
+- name: Install dependencies for check_logfile
+  yum:
+    name: perl-Digest-MD5
+    state: present
+  become: yes
+  with_items:  "{{ plugin_dir }}"
+  when: item | search("linux")
+  tags:
+    - deploy-plugins
+
 #Postgresql related stuff
 - name: Install dependencies for check_postgresql.pl 
   yum:
