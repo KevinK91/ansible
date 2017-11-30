@@ -27,6 +27,10 @@
 - file:
     path: /usr/lib64/nagios/plugins/check_logfiles
     state: absent
+  become: yes
+  tags:
+    - deploy-plugins
+
 
 #Postgresql related stuff
 - name: Install dependencies for check_postgresql.pl 
