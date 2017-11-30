@@ -17,12 +17,16 @@
 - name: Install dependencies for check_logfile
   yum:
     name: perl-Digest-MD5
-    state: present
+    state: absent
   become: yes
   with_items:  "{{ plugin_dir }}"
   when: item | search("linux")
   tags:
     - deploy-plugins
+
+- file:
+    path: /usr/lib64/nagios/plugins/check_logfiles
+    state: absent
 
 #Postgresql related stuff
 - name: Install dependencies for check_postgresql.pl 
