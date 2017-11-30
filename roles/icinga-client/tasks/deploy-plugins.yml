@@ -12,26 +12,6 @@
   tags:
     - deploy-plugins
 
-#Check_logfile perl dependencies stuff
-##This check only works for Centos 7 of Conrad google cloud instance
-- name: Install dependencies for check_logfile
-  yum:
-    name: perl-Digest-MD5
-    state: absent
-  become: yes
-  with_items:  "{{ plugin_dir }}"
-  when: item | search("linux")
-  tags:
-    - deploy-plugins
-
-- file:
-    path: /usr/lib64/nagios/plugins/check_logfiles
-    state: absent
-  become: yes
-  tags:
-    - deploy-plugins
-
-
 #Postgresql related stuff
 - name: Install dependencies for check_postgresql.pl 
   yum:
