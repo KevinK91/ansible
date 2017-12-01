@@ -10,7 +10,7 @@
 
 - name: Check if host already exists
   uri:
-    url: "https://localhost/icingaweb2/director/host?name={{inventory_hostname}}"
+    url: "https://localhost/icingaweb2/director/host?name={{ inventory_hostname }}"
     method: GET
     user: "{{ vault_icinga2_api_user }}"
     password: "{{ vault_icinga2_api_password }}"
@@ -44,6 +44,28 @@
   when: result.status != 200 or result is not defined
   tags:
     - register-host
+
+- name: Register host on icinga2 master node
+  uri:
+    url: "https://localhost/icingaweb2/director/host?name={{ inventory_hostname }}"
+    method: POST
+    user: "{{ vault_icinga2_api_user }}"
+    password: "{{ vault_icinga2_api_password }}"
+    headers:
+      Accept: "application/json"
+    body:
+      address: "{{ ipaddress.stdout }}"
+      display_name: "{{ inventory_hostname }}"
+      imports: "{{ icinga2_template }}"
+      groups: "{{ icinga2_groups }}"
+      object_name: "{{ inventory_hostname }}"
+      object_type: "object"
+    body_format: json
+    status_code: 201
+    validate_certs: no
+  delegate_to: "{{ icinga2_master_fqdn }}"
+  when: result is not defined
+  tags:
     - change-host
 
 
