@@ -40,9 +40,10 @@
     status_code: 201
     validate_certs: no
   delegate_to: "{{ icinga2_master_fqdn }}"
-  when: result.status != 200
+  when: result.status != 200 || result.status == ""
   tags:
     - register-host
+    - change-host
 
 
 - name: Deploy config 
@@ -57,6 +58,8 @@
     validate_certs: no
   delegate_to: "{{ icinga2_master_fqdn }}"
   run_once: true
+  when: result.status != 200 || result.status == "" 
   tags:
     - register-host
+    - change-host
 
