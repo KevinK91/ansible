@@ -45,7 +45,7 @@
   tags:
     - register-host
 
-- name: Register host on icinga2 master node
+- name: Modify host on icinga2 master node
   uri:
     url: "https://localhost/icingaweb2/director/host?name={{ inventory_hostname }}"
     method: POST
@@ -61,7 +61,7 @@
       object_name: "{{ inventory_hostname }}"
       object_type: "object"
     body_format: json
-    status_code: 201
+    status_code: 200
     validate_certs: no
   delegate_to: "{{ icinga2_master_fqdn }}"
   when: result is not defined
