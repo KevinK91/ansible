@@ -5,6 +5,7 @@
   register: ipaddress
   tags:
     - register-host
+    - change-host
 
 
 - name: Check if host already exists
