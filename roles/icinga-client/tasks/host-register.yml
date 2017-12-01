@@ -61,7 +61,9 @@
       object_name: "{{ inventory_hostname }}"
       object_type: "object"
     body_format: json
-    status_code: 200
+    status_code: 
+      - 200
+      - 304
     validate_certs: no
   delegate_to: "{{ icinga2_master_fqdn }}"
   when: result is not defined
