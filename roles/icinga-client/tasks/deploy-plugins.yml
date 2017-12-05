@@ -24,13 +24,13 @@
     - deploy-plugins
 
 #Postgresql related stuff
-- name: Install dependencies for check_postgresql.pl 
+- name: Install dependencies for check_repmgr 
   yum:
     name: python-psycopg2
     state: present
   become: yes
   with_items:  "{{ plugin_dir }}"
-  when: item | search("repmgr")
+  when: item | search("postgres")
   tags:
     - deploy-plugins
 
