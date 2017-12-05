@@ -1,95 +1,140 @@
-#!/usr/bin/env python
-import sys
-import argparse
-import psycopg2
-from datetime import timedelta
-import re
+#!/bin/bash
+#
+# evaluate free system memory from Linux based systems
+#
+# Date: 2007-11-12
+# Author: Thomas Borger - ESG
+#
+# the memory check is done with following command line:
+# free -m | grep buffers/cache | awk '{ print $4 }'
 
-def get_seconds(td):
-	#Get total seconds of a timedelta, not using datetime.timedelta.total_seconds for backward compatibility with Python < 2.7
-	return (td.microseconds + (td.seconds + td.days * 24 * 3600) * 1e6) / 1e6
+# get arguments
 
-def arg_to_timedelta(arg_string):
-	#Get the value and unit from user input using regex. Accepted input includes e.g. "5 minutes" or "1h", if no unit is given we asume seconds
-	time_unit_regex = '^\s*(\d+(?:\.\d+)?)\s*(\w*)\s*$'
-	matches = re.search(time_unit_regex, arg_string)
-	
-	try:
-		value = int(matches.group(1))
-		#If we get no unit, we set it to seconds
-		if matches.group(2) == '': 
-			unit = 's'
-		else:
-			unit = matches.group(2)[0]
-	except:
-		unit = None
+#The warning and critical argument is currently not used
+set -o errexit -o noclobber -o nounset -o pipefail
+OPTS=$(getopt -o hu:wca: -l help,user,action: --name "$0" -- "$@")
 
-	#Evaluating the unit to use with timedelta
-	if unit == 's':
-		return timedelta(seconds=value)
-	elif unit == 'm':
-		return timedelta(minutes=value)
-	elif unit == 'h':
-		return timedelta(hours=value)
-	elif unit == 'd':
-		return timedelta(days=value)
-	elif unit == 'w':
-		return timedelta(weeks=value)
-	else:
-		raise Exception("unrecognized time unit")
+if [ $? != 0 ] ; then echo "Failed parsing options." >&2 ; exit 1 ; fi
 
-def main(argv):
-	#Arguments definition
-	parser = argparse.ArgumentParser(description="Checks time lag in a Postgres replication cluster using repmgr")
-	parser.add_argument('-H','--host', help="Hostname to connect to", default = None)
-	parser.add_argument('-p','--port', help="Host port", default = None)
-	parser.add_argument('-db','--dbname', help="Name of the database", default = None, required=True)
-	parser.add_argument('-u','--dbuser', help="Database user", default = None)
-	parser.add_argument('-P','--dbpass', help="Database user password", default = None)
-	parser.add_argument('-C','--cluster', help="Name of the cluster", required=True)
-	parser.add_argument('-n','--node', help="Number of the node", required=True)
-	parser.add_argument('-w','--warning', help="Warning limit (supported units: s[econds], m[inutes], h[ours], d[ays] and w[eeks]. Seconds assumed if no unit is specified)", default = '0 s')
-	parser.add_argument('-c','--critical', help="Critical limit (supported units: s[econds], m[inutes], h[ours], d[ays] and w[eeks]. Seconds assumed if no unit is specified)", default = '0 s')
-	args = parser.parse_args()
+#echo "$OPTS"
+eval set -- "$OPTS"
 
-	try:
-		#Database connection
-		conn = psycopg2.connect(host=args.host, port=args.port, database=args.dbname, user=args.dbuser, password=args.dbpass)
-		cur = conn.cursor()
-		cur.execute("SET search_path TO %s", ['repmgr_' + str(args.cluster)])
-		cur.execute("SELECT time_lag FROM repl_status WHERE standby_node = %s", [args.node])
-		r = cur.fetchone()
-	
-		cur.close()
-		conn.close()
+user="postgres"
+file="/etc/repmgr/10/repmgr.conf"
 
-		#Convert warning and critical user input into timedelta
-		warning = get_seconds(arg_to_timedelta(args.warning))
-		critical = get_seconds(arg_to_timedelta(args.critical))
+while true; do
+  case "$1" in
+    -h|--help)  
+        hlp=true
+        shift
+        shift
+        ;;
+    -u|--user)
+        user=$2
+        shift
+        shift
+        ;;
+    -a|--action)
+        action=$2
+        shift
+        shift
+        ;;
+    -f|--file)
+        file=$2
+        shift
+        shift
+        ;;
+    -- ) 
+        shift; 
+        break 
+        ;;
+    *)  
+        echo "Not implemented: $1" >&2
+        exit 1
+        ;;
+  esac
+done
 
-		#Check if result is empty
-		if cur.rowcount <= 0:
-			raise Exception("Query didn't return a valid result for the specified cluster/node")
-		else:
-			value = get_seconds(r[0])
+# usage
+HELP="
+    usage: $0 [ -w value -c value -p -h ]
 
-		#Preparing the performance data
-		perfdata =  's|time_lag=' + str(value) + 's;' + str(warning) + ';' + str(critical)
-	
-	except Exception as ex:
-		print 'REPMGR_LAG UNKNOWN: error: ' + str(ex)
-                sys.exit(3)
+    syntax:
 
-	#We raise the right exit code for every case
-	if value >= critical:
-		print 'REPMGR_LAG CRITICAL: time_lag=' + str(value) + perfdata
-		sys.exit(2)
-	elif value >= warning:
-		print 'REPMGR_LAG WARNING: time_lag=' + str(value) + perfdata
-		sys.exit(1)
-	else:
-		print 'REPMGR_LAG OK: time_lag=' + str(value) + perfdata
-		sys.exit(0)
+            -u --> To execute the replication commands on localhost
+                   Default user is postgres
+            -f --> Defines the replication configuration file
+                   Default is /etc/repmgr/10/repmgr.conf
+            -a --> Define which kind of check should be done
+                  role: checks if the node has the expected role
+                  replication-lag: checks if the node is lagging by more than replication_lag_warning or replication_lag_critical
+                  archive-ready: checks for WAL files which have not yet been archived
+                  downstream: checks that the expected downstream nodes are attached
+                  slots: checks there are no inactive replication slots
+"
+#Check Arguments and exit if they are not set
+if [ "$hlp" = "yes" ]; then
+  echo "$HELP"
+  exit 0
+fi
 
-if __name__=='__main__':
-	main(sys.argv)
+if [ -z "$action" ]; then
+  echo "CRITICAL - -a --> action must be set"
+  echo "$HELP"
+  exit 2
+fi
+
+case "$action" in
+  "role")
+  result=$(/usr/bin/repmgr node check -f $file --nagios --role)
+  exitcode=$?
+  if [[ $exitcode == 6 ]];then
+  echo " REPMGR_SERVER_ROLE CRITICAL: node is not reachable"
+  exit 2
+  fi
+  echo "$result"
+  exit $exitcode
+  ;;
+  "replication-lag") 
+  result=$(/usr/bin/repmgr node check -f $file --nagios --replication-lag)
+  exitcode=$?
+  if [[ $exitcode == 6 ]];then
+  echo " REPMGR_SERVER_ROLE CRITICAL: node is not reachable"
+  exit 2
+  fi
+  echo "$result"
+  exit $exitcode
+  ;;
+  "archive-ready")
+  result=$(/usr/bin/repmgr node check -f $file --nagios --archive-ready)
+  exitcode=$?
+  if [[ $exitcode == 6 ]];then
+  echo " REPMGR_SERVER_ROLE CRITICAL: node is not reachable"
+  exit 2
+  fi
+  echo "$result"
+  exit $exitcode
+  ;;
+  "downstream")
+  result=$(/usr/bin/repmgr node check -f $file --nagios --downstream)
+  exitcode=$?
+  if [[ $exitcode == 6 ]];then
+  echo " REPMGR_SERVER_ROLE CRITICAL: node is not reachable"
+  exit 2
+  fi
+  echo "$result"
+  exit $exitcode
+  ;;
+  "slots") 
+  result=$(/usr/bin/repmgr node check -f $file --nagios --slots)
+  exitcode=$?
+  if [[ $exitcode == 6 ]];then
+  echo " REPMGR_SERVER_ROLE CRITICAL: node is not reachable"
+  exit 2
+  fi
+  echo "$result"
+  exit $exitcode
+  ;;
+esac
+
+
