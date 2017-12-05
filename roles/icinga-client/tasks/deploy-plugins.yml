@@ -23,6 +23,18 @@
   tags:
     - deploy-plugins
 
+#Postgresql related stuff
+- name: Install dependencies for check_postgresql.pl 
+  yum:
+    name: python-psycopg2
+    state: present
+  become: yes
+  with_items:  "{{ plugin_dir }}"
+  when: item | search("repmgr")
+  tags:
+    - deploy-plugins
+
+
 #Pgpool specific stuff
 - name: Deploy password file for pgpool pcpcommand
   lineinfile:
