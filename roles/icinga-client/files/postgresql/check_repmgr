@@ -11,16 +11,39 @@
 # get arguments
 
 #The warning and critical argument is currently not used
+# usage
+HELP="
+    usage: $0 [ -u value -f value -a value ]
+
+    syntax:
+
+            -u --> To execute the replication commands on localhost
+                   Default user is postgres
+            -f --> Defines the replication configuration file
+                   Default is /etc/repmgr/10/repmgr.conf
+            -a --> Define which kind of check should be done
+                  role: checks if the node has the expected role
+                  replication-lag: checks if the node is lagging by more than replication_lag_warning or replication_lag_critical
+                  archive-ready: checks for WAL files which have not yet been archived
+                  downstream: checks that the expected downstream nodes are attached
+                  slots: checks there are no inactive replication slots
+"
+
 set -o errexit -o noclobber -o nounset -o pipefail
-OPTS=$(getopt -o hu:wca: -l help,user,action: --name "$0" -- "$@")
+OPTS=$(getopt -o huaf -l help,user,action,file --name "$0" -- "$@")
 
 if [ $? != 0 ] ; then echo "Failed parsing options." >&2 ; exit 1 ; fi
 
-#echo "$OPTS"
 eval set -- "$OPTS"
+if [[ "$OPTS" == " --" ]]; then
+echo "$HELP"
+exit
+fi
 
 user="postgres"
 file="/etc/repmgr/10/repmgr.conf"
+hlp=false
+action=""
 
 while true; do
   case "$1" in
@@ -49,29 +72,12 @@ while true; do
         break 
         ;;
     *)  
-        echo "Not implemented: $1" >&2
+        echo "$HELP"
         exit 1
         ;;
   esac
 done
 
-# usage
-HELP="
-    usage: $0 [ -w value -c value -p -h ]
-
-    syntax:
-
-            -u --> To execute the replication commands on localhost
-                   Default user is postgres
-            -f --> Defines the replication configuration file
-                   Default is /etc/repmgr/10/repmgr.conf
-            -a --> Define which kind of check should be done
-                  role: checks if the node has the expected role
-                  replication-lag: checks if the node is lagging by more than replication_lag_warning or replication_lag_critical
-                  archive-ready: checks for WAL files which have not yet been archived
-                  downstream: checks that the expected downstream nodes are attached
-                  slots: checks there are no inactive replication slots
-"
 #Check Arguments and exit if they are not set
 if [ "$hlp" = "yes" ]; then
   echo "$HELP"
