@@ -16,6 +16,7 @@
   yum:
     name: "{{ item }}"
     state: latest
+    enabled: yes
   with_items: "{{ icinga2_client_packages }}"
   become: yes
 
