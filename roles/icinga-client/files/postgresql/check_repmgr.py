@@ -4,6 +4,7 @@
 import argparse
 import subprocess
 import sys
+import os
 from pwd import getpwnam  
 
 def arg_pars():
@@ -52,7 +53,6 @@ def repmgr_check(args):
 
 
 def main():
-    print getpwnam('Kirst').pw_gid
     repmgr_check(arg_pars()) 
 
 if __name__ == '__main__':
