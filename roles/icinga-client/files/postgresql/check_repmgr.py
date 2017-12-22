@@ -4,6 +4,7 @@
 import argparse
 import subprocess
 import sys
+from pwd import getpwnam  
 
 def arg_pars():
     parser = argparse.ArgumentParser()
@@ -22,10 +23,21 @@ def arg_pars():
                   slots: checks there are no inactive replication slots')
     return parser.parse_args()
 
+def demote(username):
+    """Pass the function 'set_ids' to preexec_fn, rather than just calling
+    setuid and setgid. This will change the ids for that subprocess only"""
+
+    def set_ids():
+        os.setgid(getpwnam(username).pw_gid)
+        os.setuid(getpwnam(username).pw_uid)
+
+    return set_ids
+
+
 def repmgr_check(args):
     cmd = '/usr/bin/repmgr node check -f ' + args.file + ' --nagios --' + args.action
     try: 
-        proc = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        proc = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, preexec_fn=demote(args.username))
         print proc.communicate()[0]
         if proc.wait() == 6:
             sys.exit(2)
@@ -40,6 +52,7 @@ def repmgr_check(args):
 
 
 def main():
+    print getpwnam('Kirst').pw_gid
     repmgr_check(arg_pars()) 
 
 if __name__ == '__main__':
