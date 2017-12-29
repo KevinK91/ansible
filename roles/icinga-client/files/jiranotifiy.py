@@ -4,6 +4,7 @@
 import argparse
 import os
 import ConfigParser
+from jira import JIRA
 
 MANDATORY_CONFIG_ENTRIES = [
     'url', 'username', 'password', 'jira_project_key', 'jira_issue_type']
@@ -25,8 +26,8 @@ def arg_pars():
     parser.add_argument('-t', action='store', dest='issuetype',  required=True,
                     help='Set the issuetype \
                     Use the correct id or name')
-    parser.add_argument('-c', action='store', dest='component',
-                    help='Set the component \
+    parser.add_argument('-c', action='store', dest='components', nargs='*', type=str,
+                    help='Set the components \
                     Use the correct id or name')
     parser.add_argument('-d', action='store', dest='description',  required=True,
                     help='Set the description ')
@@ -77,9 +78,12 @@ if __name__ == '__main__':
         print("Configuration file is corrupt: %s" % e)
         sys.exit(2)
 
-#    jira = open_jira_session(config['url'],
-#                             config['username'],
-#                             config['password'])
+    jira = open_jira_session(config['url'],
+                             config['username'],
+                             config['password'])
+
+    jira.create_issue(project=args.project, summary=args.summary,
+                              description=args.description, issuetype={'name': args.issuetype}, reporter=args.reporter, components=args.components)
 #    if 
     
 #    print config['url'], config['username'], config['password'], config['jira_project_key'], config['jira_issue_type']
