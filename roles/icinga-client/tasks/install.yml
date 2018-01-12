@@ -1,6 +1,6 @@
 ---
 
-- name: Add Icinga2 repository
+- name: Add Icinga2 repository Centos7
   yum_repository:
     name: icinga
     description: Icinga2 repository
@@ -10,15 +10,41 @@
   become: yes
   tags:
     - icinga2-packages
-
+  when: ansible_distribution == "CentOS"
   
-- name: Install icinga2 with nagios plugins
+- name: Install icinga2 with nagios plugins Centos7
   yum:
     name: "{{ item }}"
     state: latest
     enabled: yes
   with_items: "{{ icinga2_client_packages }}"
   become: yes
+  when: ansible_distribution == "CentOS"
+
+- name: Add an Apt signing key Icinga2
+  apt_key:
+    url: https://packages.icinga.com/icinga.key
+    state: present
+  when: ansible_distribution == "Ubuntu"
+
+- name: Add Icinga2 repository Ubuntu
+  apt_repository:
+     repo: deb http://packages.icinga.com/ubuntu icinga-xenial main
+     state: present
+     filename: 'icinga2'
+  when: ansible_distribution == "Ubuntu"
+
+- name: Install icinga2 with nagios plugins Ubuntu xenial
+  apt:
+    name: "{{ item }}"
+    state: latest
+    enabled: yes
+    update_cache: yes
+    only_upgrade: yes
+  with_items: "{{ icinga2_client_packages }}"
+  become: yes
+  when: ansible_distribution == "Ubuntu"
+
 
 - name: Enable api feature
   command: icinga2 feature enable api

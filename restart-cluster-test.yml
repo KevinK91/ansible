@@ -1,0 +1,31 @@
+---
+- hosts: sasdesign
+  vars:
+    kill_user: 
+      - "sas-install"
+  tasks:
+    - name: stop the whole sas service on the host
+      shell: echo "stop test"
+      tags:
+        - stop
+  
+    - name: start the whole sas service on the host
+      shell: echo "start test"
+      tags:
+        - start
+
+- hosts: sasrtdm
+  vars:
+    kill_user: 
+      - "sas-install"
+  tasks:
+    - name: stop the whole sas service on the host
+      shell: echo "stop test"
+      tags:
+        - stop
+  
+    - name: start the whole sas service on the host
+      shell: echo "start test"
+      tags:
+        - start
+
