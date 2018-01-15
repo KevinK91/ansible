@@ -3,7 +3,8 @@
   vars:
     kill_user: 
       - "sas-install"
- tasks:
+
+  tasks:
     - name: stop the whole sas service on the host
       shell: echo "stop test"
       tags:

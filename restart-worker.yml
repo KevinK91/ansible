@@ -3,6 +3,7 @@
   vars:
     kill_user: 
       - "sas-install"
+  
   tasks:
     - name: stop the whole sas service on the host
       shell: /opt/export/sas_rtdm.sh stop
