@@ -42,6 +42,12 @@ def arg_pars():
                     help='Set the service from icinga2')
     parser.add_argument('-nc', action='store', dest='comment', 
                     help='Set notification comment from icinga2')
+    parser.add_argument('-no', action='store', dest='organisation', 
+                    help='Set the custom field for organisation. \
+                    This field must be created in Jira')
+    parser.add_argument('-ne', action='store', dest='environment', 
+                    help='Set the custom field for envirionment. \
+                    This field must be created in Jira')
     
 
     return parser.parse_args()
@@ -75,7 +81,9 @@ def open_jira_issue(jira, args):
         'description': args.description,
         'issuetype': {'name': args.issuetype},
 	'priority': {'name': args.priority},
-	'components': components,
+        'components': components,
+        'customfield_10003': args.organisation,
+        'customfield_10500': args.environment,
     }
 	issue = jira.create_issue(fields=issue_dict)
 	return issue
