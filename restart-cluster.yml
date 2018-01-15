@@ -1,5 +1,5 @@
 ---
-- hosts: sasdesign
+- hosts:  "{{ group_rtdm }}"
   vars:
     kill_user: 
       - "sas-install"
@@ -14,29 +14,37 @@
       with_items: "{{ kill_user }}"
       tags:
         - stop
+      register: diff_cmd
+      failed_when: diff_cmd.rc >= 2
+
+
+- hosts: "{{ group_sasdesign }}"
+  vars:
+    kill_user: 
+      - "sas-install"
+  tasks:
+    - name: stop the whole sas service on the host
+      shell: /opt/export/sas_rtdm.sh stop
+      tags:
+        - stop
+  
+    - name: Kill running processes
+      shell: " killall -u {{ item }}"
+      with_items: "{{ kill_user }}"
+      tags:
+        - stop
+      register: diff_cmd
+      failed_when: diff_cmd.rc >= 2
 
     - name: start the whole sas service on the host
       shell: /opt/export/sas_rtdm.sh start
       tags:
         - start
 
-- hosts: sasrtdm
+- hosts:  "{{ group_rtdm }}"
   vars:
-    kill_user: 
-      - "sas-install"
   tasks:
     - name: stop the whole sas service on the host
-      shell: /opt/export/sas_rtdm.sh stop
-      tags:
-        - stop
-  
-    - name: Kill running processes
-      shell: " killall -u {{ item }}"
-      with_items: "{{ kill_user }}"
-      tags:
-        - stop
-
-    - name: start the whole sas service on the host
       shell: /opt/export/sas_rtdm.sh start
       tags:
         - start
