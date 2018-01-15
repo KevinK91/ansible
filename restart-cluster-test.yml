@@ -1,11 +1,21 @@
 ---
+- hosts: {{ group_rtdm }}
+  vars:
+    kill_user: 
+      - "sas-install"
+  tasks:
+    - name: stop the whole sas service on the host
+      shell: echo "stop all worker nodes"
+      tags:
+        - stop
+
 - hosts: {{ group_sasdesign }}
   vars:
     kill_user: 
       - "sas-install"
   tasks:
     - name: stop the whole sas service on the host
-      shell: echo "stop test"
+      shell: echo "stop metadata server"
       tags:
         - stop
   
