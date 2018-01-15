@@ -17,7 +17,7 @@
     name: "{{ item }}"
     state: latest
     enabled: yes
-  with_items: "{{ icinga2_client_packages }}"
+  with_items: "{{ icinga2_client_packages_centos }}"
   become: yes
   when: ansible_distribution == "CentOS"
 
@@ -26,6 +26,7 @@
     url: https://packages.icinga.com/icinga.key
     state: present
   when: ansible_distribution == "Ubuntu"
+  become: yes
 
 - name: Add Icinga2 repository Ubuntu
   apt_repository:
@@ -33,6 +34,7 @@
      state: present
      filename: 'icinga2'
   when: ansible_distribution == "Ubuntu"
+  become: yes
 
 - name: Install icinga2 with nagios plugins Ubuntu xenial
   apt:
@@ -41,7 +43,7 @@
     enabled: yes
     update_cache: yes
     only_upgrade: yes
-  with_items: "{{ icinga2_client_packages }}"
+  with_items: "{{ icinga2_client_packages_ubuntu }}"
   become: yes
   when: ansible_distribution == "Ubuntu"
 

@@ -5,7 +5,10 @@ icinga2_manubulon_plugin_dir: /usr/lib64/nagios/plugins
 
 icinga2_centos7_repo: https://packages.icinga.com/epel/icinga-rpm-release-7-latest.noarch.rpm
 
-icinga2_client_packages:
+icinga2_client_packages_ubuntu:
+  - nagios-plugins 
+  - icinga2
+icinga2_client_packages_centos:
   - nagios-plugins-all 
   - icinga2
 
