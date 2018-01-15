@@ -1,5 +1,5 @@
 ---
-- hosts: sasdesign
+- hosts: {{ group_sasdesign }}
   vars:
     kill_user: 
       - "sas-install"
@@ -14,7 +14,7 @@
       tags:
         - start
 
-- hosts: sasrtdm
+- hosts: {{ group_rtdm }}
   vars:
     kill_user: 
       - "sas-install"
