@@ -15,6 +15,9 @@
       with_items: "{{ kill_user }}"
       tags:
         - stop
+      register: diff_cmd
+      failed_when: diff_cmd.rc >= 2
+        
 
     - name: start the whole sas service on the host
       shell: /opt/export/sas_rtdm.sh start
