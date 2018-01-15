@@ -4,12 +4,12 @@
     kill_user: 
       - "sas-install"
   tasks:
-    - name: stop the whole sas service on the host
+    - name: stop all SAS service on the host "{{ inventory_hostname }}"
       shell: /opt/export/sas_rtdm.sh stop
       tags:
         - stop
   
-    - name: Kill running processes
+    - name: Kill running processes of user "{{ kill_user }}"
       shell: " killall -u {{ item }}"
       with_items: "{{ kill_user }}"
       tags:
@@ -23,12 +23,12 @@
     kill_user: 
       - "sas-install"
   tasks:
-    - name: stop the whole sas service on the host
+    - name: stop all SAS service on the host "{{ inventory_hostname }}"
       shell: /opt/export/sas_rtdm.sh stop
       tags:
         - stop
   
-    - name: Kill running processes
+    - name: Kill running processes of user "{{ kill_user }}"
       shell: " killall -u {{ item }}"
       with_items: "{{ kill_user }}"
       tags:
@@ -36,7 +36,7 @@
       register: diff_cmd
       failed_when: diff_cmd.rc >= 2
 
-    - name: start the whole sas service on the host
+    - name: start all SAS service on the host
       shell: /opt/export/sas_rtdm.sh start
       tags:
         - start
@@ -44,7 +44,7 @@
 - hosts:  "{{ group_rtdm }}"
   vars:
   tasks:
-    - name: stop the whole sas service on the host
+    - name: stop all SAS service on the host "{{ inventory_hostname }}"
       shell: /opt/export/sas_rtdm.sh start
       tags:
         - start

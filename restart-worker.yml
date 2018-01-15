@@ -5,7 +5,7 @@
       - "sas-install"
   
   tasks:
-    - name: stop the whole sas service on the host
+    - name: stop all SAS service on the host "{{ inventory_hostname }}"
       shell: /opt/export/sas_rtdm.sh stop
       tags:
         - stop
@@ -19,7 +19,7 @@
       failed_when: diff_cmd.rc >= 2
         
 
-    - name: start the whole sas service on the host
+    - name: start all SAS service on the host "{{ inventory_hostname }}"
       shell: /opt/export/sas_rtdm.sh start
       tags:
         - start
