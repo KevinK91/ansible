@@ -73,32 +73,31 @@ def open_jira_session(server, username, password, verify=False):
                 basic_auth=(username, password))
 
 def open_jira_issue(jira, args):
-	components = list()
+    components = list()
     try:
         prio = args.priority.split(":")
         if "WARNING" in args.service:
             prio = prio[0]
         elif "CRITICAL" in args.service:
             prio = prio[1]
+        else:
+            prio = args.priority
     except Exception as error:
         print error
-        prio = args.priority
-
-	for ele in args.components:
-		components.append({'name': ele})
-
-	issue_dict = {
+    for ele in args.components:
+        components.append({'name': ele})
+    issue_dict = {
         'project': {'key': args.project},
         'summary': args.summary,
         'description': args.description,
         'issuetype': {'name': args.issuetype},
-	'priority': {'name': pri},
+	'priority': {'name': prio},
         'components': components,
         'customfield_10003': args.organisation,
         'customfield_10500': args.environment,
     }
-	issue = jira.create_issue(fields=issue_dict)
-	return issue
+    issue = jira.create_issue(fields=issue_dict)
+    return issue
 
 def comment_jira_issue(jira, args, config):
 	pattern = re.compile("^(\w+)-(\d+)$")
@@ -126,6 +125,7 @@ def icinga2_service_add_comment(config, args, comment):
 	headers = {
     'Accept': 'application/json',}
 	data = {'type': 'Service', 'filter': "host.name == filterHost && service.name == filterService", "filter_vars": { "filterHost": args.host, "filterService": args.service}, "author": config['icinga2_author'], "comment": comment}
+	print data
 	r = requests.post(config['icinga2_url'] + "actions/add-comment", headers=headers, json=data, verify=False, auth=(config['icinga2_apiuser'], config['icinga2_apipassword']))
 
 if __name__ == '__main__':
