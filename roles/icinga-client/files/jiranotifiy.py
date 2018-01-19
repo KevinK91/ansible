@@ -40,6 +40,8 @@ def arg_pars():
                     help='Set the notification type from icinga2')
     parser.add_argument('-nh', action='store', dest='host', 
                     help='Set the hostname from icinga2')
+    parser.add_argument('-nst', action='store', dest='servicestate', 
+                    help='Set the service state from icinga2')
     parser.add_argument('-ns', action='store', dest='service', 
                     help='Set the service from icinga2')
     parser.add_argument('-nc', action='store', dest='comment', 
@@ -75,13 +77,14 @@ def open_jira_session(server, username, password, verify=False):
 def open_jira_issue(jira, args):
     components = list()
     try:
-        prio = args.priority.split(":")
-        if "WARNING" in args.service:
-            prio = prio[0]
-        elif "CRITICAL" in args.service:
-            prio = prio[1]
-        else:
+        if ":" not in args.priority:
             prio = args.priority
+        else:         
+            prio = args.priority.split(":")
+            if "WARNING" in args.servicestate:
+                prio = prio[0]
+            elif "CRITICAL" in args.servicestate:
+                prio = prio[1]
     except Exception as error:
         print error
     for ele in args.components:
@@ -125,7 +128,6 @@ def icinga2_service_add_comment(config, args, comment):
 	headers = {
     'Accept': 'application/json',}
 	data = {'type': 'Service', 'filter': "host.name == filterHost && service.name == filterService", "filter_vars": { "filterHost": args.host, "filterService": args.service}, "author": config['icinga2_author'], "comment": comment}
-	print data
 	r = requests.post(config['icinga2_url'] + "actions/add-comment", headers=headers, json=data, verify=False, auth=(config['icinga2_apiuser'], config['icinga2_apipassword']))
 
 if __name__ == '__main__':
