@@ -31,7 +31,9 @@ def arg_pars():
                     help='Set the components \
                     Use the correct id or name')
     parser.add_argument('-pr', action='store', dest='priority',
-                    help='Set the priority of the jira issue')
+                    help='Set the priority for WARNING and CRITICAL of the jira issue\
+                        Write for exmaple Low:High important is the notation <Waring issue priority>:<Critical issue priority>\
+                        Otherwise always be used the onle one which is configured.')
     parser.add_argument('-d', action='store', dest='description',  required=True,
                     help='Set the description ')
     parser.add_argument('-nt', action='store', dest='notifytype',  required=True,
@@ -72,6 +74,16 @@ def open_jira_session(server, username, password, verify=False):
 
 def open_jira_issue(jira, args):
 	components = list()
+    try:
+        prio = args.priority.split(":")
+        if "WARNING" in args.service:
+            prio = prio[0]
+        elif "CRITICAL" in args.service:
+            prio = prio[1]
+    except Exception as error:
+        print error
+        prio = args.priority
+
 	for ele in args.components:
 		components.append({'name': ele})
 
@@ -80,7 +92,7 @@ def open_jira_issue(jira, args):
         'summary': args.summary,
         'description': args.description,
         'issuetype': {'name': args.issuetype},
-	'priority': {'name': args.priority},
+	'priority': {'name': pri},
         'components': components,
         'customfield_10003': args.organisation,
         'customfield_10500': args.environment,
