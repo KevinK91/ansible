@@ -1,5 +1,5 @@
 ---
-- hosts:  "{{ group_postgres }}"
+- hosts:  postgresql
   vars:
     kill_user:
       - "sas-install"
@@ -8,8 +8,14 @@
       shell: ' ps faux | grep "/usr/pgsql-10/bin/postmaster -D /mnt/data/postgres10/" | grep -v grep'
       register: grep_res
 
-    - name: Kill running processes of user "{{ kill_user }}"
+    - name: Test echo command from grep
       shell: 'echo "host found"'
       when: grep_res.rc = 0
 
+- hosts:  pgpool
+  tasks:
+    - name: Active backend node "{{ backend_node }} " on host "{{ inventory_hostname }}"
+      shell: ' pcp_attach_node -h localhost -U pgpool -w -n {{ backend_node }}'
+      register: pgp_cmd
+      failed_when: pgp_cmd.rc >= 2
 
