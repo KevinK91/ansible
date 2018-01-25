@@ -1,0 +1,15 @@
+---
+- hosts:  "{{ group_postgres }}"
+  vars:
+    kill_user:
+      - "sas-install"
+  tasks:
+    - name: stop all SAS service on the host "{{ inventory_hostname }}"
+      shell: ' ps faux | grep "/usr/pgsql-10/bin/postmaster -D /mnt/data/postgres10/" | grep -v grep'
+      register: grep_res
+
+    - name: Kill running processes of user "{{ kill_user }}"
+      shell: 'echo "host found"'
+      when: grep_res.rc = 0
+
+

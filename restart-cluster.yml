@@ -17,7 +17,6 @@
       register: diff_cmd
       failed_when: diff_cmd.rc >= 2
 
-
 - hosts: "{{ group_sasdesign }}"
   vars:
     kill_user: 
@@ -44,7 +43,7 @@
 - hosts:  "{{ group_rtdm }}"
   vars:
   tasks:
-    - name: stop all SAS service on the host "{{ inventory_hostname }}"
+    - name: start all SAS service on the host "{{ inventory_hostname }}"
       shell: /opt/export/sas_rtdm.sh start
       tags:
         - start
