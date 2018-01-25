@@ -1,21 +1,38 @@
 ---
-- hosts:  postgresql
-  vars:
-    kill_user:
-      - "sas-install"
+- hosts: "{{ new_master }}"
   tasks:
-    - name: stop all SAS service on the host "{{ inventory_hostname }}"
-      shell: ' ps faux | grep "/usr/pgsql-10/bin/postmaster -D /mnt/data/postgres10/" | grep -v grep'
-      register: grep_res
+    - name: Check if postgresql is primary on host "{{ new_master }}"
+      shell: '/usr/bin/repmgr node check -f /etc/repmgr/10/repmgr.conf --nagios --role | grep -i primary'
+      register: cmd
 
     - name: Test echo command from grep
-      shell: 'echo "host found"'
-      when: grep_res.rc = 0
+      shell: 'echo "primary is running"'
+      when: cmd.rc == 0
+
+
+- hosts: "{{ old_master }}"
+  tasks:
+    - name: Check if postgresl is running "{{ inventory_hostname }}"
+      shell: ' ps faux | grep "/usr/pgsql-10/bin/postmaster -D /mnt/data/postgres10/" | grep -v grep'
+      register: cmd
+
+    - name: Test echo command from grep
+      shell: 'echo "old master is stopped"'
+      when: cmd.rc == 0
 
 - hosts:  pgpool
   tasks:
     - name: Active backend node "{{ backend_node }} " on host "{{ inventory_hostname }}"
       shell: ' pcp_attach_node -h localhost -U pgpool -w -n {{ backend_node }}'
-      register: pgp_cmd
-      failed_when: pgp_cmd.rc >= 2
+      register: cmd
+      failed_when: cmd.rc >= 2
+
+- hosts: postgresql_witness
+  tasks:
+    - name: Update witness postgresql instance on host "{{ inventory_hostname }}"
+      shell: ' repmgr -f /etc/repmgr/10/repmgr.conf witness register -h {{ primary_node }} -F'
+      register: cmd
+      failed_when: cmd.rc >= 2
+      become: true
+      become_user: postgres
 

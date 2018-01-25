@@ -47,9 +47,10 @@ def repmgr_check(args):
         error = str(error)
         if error == "No such file or directory":
             print "UNKNOWN: Cannot find utility '%s" % error
-            sys.exit
+            sys.exit(3)
         else:
             print "UNKNOWN: Error trying to run utility %s" % error
+            sys.exit(3)
 
 
 def main():
