@@ -1,36 +1,77 @@
 ---
 - hosts: "{{ new_master }}"
   tasks:
-    - name: Check if postgresql is primary on host "{{ new_master }}"
+    - name: Check if postgresql is primary on host "{{ new_master }}" and the failover worked
       shell: '/usr/bin/repmgr node check -f /etc/repmgr/10/repmgr.conf --nagios --role | grep -i primary'
-      register: cmd
-
-    - name: Test echo command from grep
-      shell: 'echo "primary is running"'
-      when: cmd.rc == 0
-
+      become: true
+      become_user: postgres
+      register: new_master
+      failed_when: new_master.rc != 0
 
 - hosts: "{{ old_master }}"
   tasks:
     - name: Check if postgresl is running "{{ inventory_hostname }}"
-      shell: ' ps faux | grep "/usr/pgsql-10/bin/postmaster -D /mnt/data/postgres10/" | grep -v grep'
+      shell: 'ps faux | grep "/usr/pgsql-10/bin/postmaster -D /mnt/data/postgres10/" | grep -v grep'
       register: cmd
 
-    - name: Test echo command from grep
-      shell: 'echo "old master is stopped"'
-      when: cmd.rc == 0
+  - name: Ensure postgresql is stopped
+      systemd:
+        name: postgresql-10
+        state: stopped
+      when: cmd.rc != 0
+      
+- hosts: "{{ old_master }}"
+  tasks:
+    - name: Rejoin the "{{ old_master }}" as new standby to the cluster
+      shell: 'repmgr node rejoin -f /etc/repmgr/10/repmgr.conf -d "host=172.16.7.12 dbname=repmgr user=repmgr" --force-rewind --verbose'
+      become: true
+      become_user: postgres
+      register: old_master
+      failed_when: old_master.rc != 0
+    
+    - name: Check if postgresql is standby on host "{{ new_master }}" and old master is not a master
+      shell: '/usr/bin/repmgr node check -f /etc/repmgr/10/repmgr.conf --nagios --role | grep -i standby'
+      become: true
+      become_user: postgres
+      register: new_standby
+      failed_when: new_standby.rc != 0
 
 - hosts:  pgpool
   tasks:
-    - name: Active backend node "{{ backend_node }} " on host "{{ inventory_hostname }}"
-      shell: ' pcp_attach_node -h localhost -U pgpool -w -n {{ backend_node }}'
+    - name: Active all backend nodes on host "{{ inventory_hostname }}"
+      shell: 'pcp_attach_node -h localhost -U pgpool -w -n {{ item }}'
       register: cmd
-      failed_when: cmd.rc >= 2
+      failed_when: cmd.rc != 0
+      with_items: "{{ backend_nodes }}"
+
+- hosts: "{{ old_master }}"
+  tasks:
+    - name: Switchover the replication status back to origin
+      shell: 'repmgr -v -f /etc/repmgr/10/repmgr.conf -C /etc/repmgr/10/repmgr.conf standby switchover'
+      become: true
+      become_user: postgres
+      register: switchover
+      failed_when: switchover.rc != 0
+
+    - name: Check if postgresql is again primary on host "{{ old_master }}"
+      shell: '/usr/bin/repmgr node check -f /etc/repmgr/10/repmgr.conf --nagios --role | grep -i primary'
+      become: true
+      become_user: postgres
+      register: new_master
+      failed_when: new_master.rc != 0
+
+- hosts:  pgpool
+  tasks:
+    - name: Active all backend nodes on host "{{ inventory_hostname }}"
+      shell: 'pcp_attach_node -h localhost -U pgpool -w -n {{ item }}'
+      register: cmd
+      failed_when: cmd.rc != 0
+      with_items: "{{ backend_nodes }}"
 
 - hosts: postgresql_witness
   tasks:
     - name: Update witness postgresql instance on host "{{ inventory_hostname }}"
-      shell: ' repmgr -f /etc/repmgr/10/repmgr.conf witness register -h {{ primary_node }} -F'
+      shell: ' repmgr -f /etc/repmgr/10/repmgr.conf witness register -h {{ old_master }} -F'
       register: cmd
       failed_when: cmd.rc >= 2
       become: true

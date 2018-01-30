@@ -1,6 +1,6 @@
 ---
 
-- name: Gest ip adress
+- name: Get ip adress
   shell: hostname -i
   register: ipaddress
   tags:
@@ -18,7 +18,7 @@
       Accept: "application/json"
     validate_certs: no
   delegate_to: "{{ icinga2_master_fqdn }}"
-  register: result
+  egister: result
   ignore_errors: True
   #failed_when: result.status != 200 or result.status != 404
 
