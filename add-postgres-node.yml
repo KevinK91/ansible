@@ -15,7 +15,7 @@
       register: cmd
 
     - name: Ensure postgresql is stopped
-      systemd:
+      service:
         name: postgresql-10
         state: stopped
       when: cmd.rc != 0
