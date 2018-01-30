@@ -68,7 +68,7 @@
       failed_when: cmd.rc != 0
       with_items: "{{ backend_nodes }}"
 
-- hosts: postgresql_witness
+- hosts: "{{ witness_server }}"
   tasks:
     - name: Update witness postgresql instance on host "{{ inventory_hostname }}"
       shell: ' repmgr -f /etc/repmgr/10/repmgr.conf witness register -h {{ old_master }} -F'
