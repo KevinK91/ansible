@@ -14,7 +14,7 @@
       shell: 'ps faux | grep "/usr/pgsql-10/bin/postmaster -D /mnt/data/postgres10/" | grep -v grep'
       register: cmd
 
-  - name: Ensure postgresql is stopped
+    - name: Ensure postgresql is stopped
       systemd:
         name: postgresql-10
         state: stopped
