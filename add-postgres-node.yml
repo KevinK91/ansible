@@ -15,7 +15,10 @@
     register: cmd
 
   - name: Ensure postgresql is stopped
-    systemd: name=postgresql-10 state= stopped
+    systemd: 
+      name: postgresql-10 
+      state: stopped
+    become: true
     when: cmd.rc != 0
       
 - hosts: "{{ old_master }}"
@@ -81,4 +84,5 @@
     systemd:
       name: repmgr10
       state: restarted
+    become: true
 
