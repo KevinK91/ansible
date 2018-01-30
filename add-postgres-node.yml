@@ -77,7 +77,7 @@
 
 - hosts: postgresql
   tasks:
-  - name: Ensure postgresql is stopped
+    - name: Ensure repmgr is restarted
       systemd:
         name: repmgr10
         state: restarted
