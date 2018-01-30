@@ -1,0 +1,7 @@
+---
+- hosts: "{{ new_master }}"
+  tasks:
+  - name: Print out the result of chown
+    debug: 
+      msg: {{ hostvars['postgresql']['ansible_eth0']['ipv4']['address'] }}
+
