@@ -77,3 +77,10 @@
       become: true
       become_user: postgres
 
+- hosts: postgresql
+  tasks:
+  - name: Ensure postgresql is stopped
+      systemd:
+        name: repmgr10
+        state: restarted
+
