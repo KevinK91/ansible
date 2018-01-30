@@ -24,7 +24,7 @@
 - hosts: "{{ old_master }}"
   tasks:
   - name: Rejoin the "{{ old_master }}" as new standby to the cluster
-    shell: 'repmgr node rejoin -f /etc/repmgr/10/repmgr.conf -d "host=172.16.7.12 dbname=repmgr user=repmgr" --force-rewind --verbose'
+    shell: 'repmgr node rejoin -f /etc/repmgr/10/repmgr.conf -d "host={{ old_master_ip }} dbname=repmgr user=repmgr" --force-rewind --verbose'
     become: true
     become_user: postgres
     register: old_master
@@ -72,7 +72,7 @@
 - hosts: "{{ witness_server }}"
   tasks:
   - name: Update witness postgresql instance on host "{{ inventory_hostname }}"
-    shell: ' repmgr -f /etc/repmgr/10/repmgr.conf witness register -h {{ old_master }} -F'
+    shell: ' repmgr -f /etc/repmgr/10/repmgr.conf witness register -h {{ old_master_ip }} -F'
     register: cmd
     failed_when: cmd.rc >= 2
     become: true
