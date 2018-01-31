@@ -23,7 +23,7 @@
     when: cmd.rc != 0
       
   - name: Rejoin the "{{ old_master }}" as new standby to the cluster
-    shell: 'repmgr node rejoin -f /etc/repmgr/10/repmgr.conf -d "host={{ old_master_ip }} dbname=repmgr user=repmgr" --force-rewind --verbose'
+    shell: 'repmgr node rejoin -f /etc/repmgr/10/repmgr.conf -d "host={{ new_master }} dbname=repmgr user=repmgr" --force-rewind --verbose'
     become: true
     become_user: postgres
     register: old_master
