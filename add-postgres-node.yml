@@ -13,6 +13,7 @@
   - name: Check if postgresl is running "{{ inventory_hostname }}"
     shell: 'ps faux | grep "/usr/pgsql-10/bin/postmaster -D /mnt/data/postgres10/" | grep -v grep'
     register: cmd
+    failed_when: new_master.rc >= 2
 
   - name: Ensure postgresql is stopped
     systemd: 
