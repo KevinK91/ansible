@@ -12,5 +12,9 @@
 
 
 - name: Install icinga2 agent
-  import_tasks: install.yml
+  import_tasks: install-centos.yml
+  when: ansible_distribution == "CentOS"
 
+
+- import_tasks: install-ubuntu.yml
+  when: ansible_distribution == "Ubuntu" 
