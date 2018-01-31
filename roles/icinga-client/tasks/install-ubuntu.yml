@@ -105,8 +105,8 @@
   copy:
     src: files/icinga2.conf
     dest: "{{ icinga2_sysconf_dir }}/icinga2.conf"
-    owner: nagios
-    group: nagios
+    owner: root
+    group: root
     mode: u=rw,g=r,o=r
     become: True
 
@@ -114,8 +114,8 @@
   template:
     src: templates/zones.conf.j2
     dest: "{{ icinga2_sysconf_dir }}/zones.conf"
-    owner: nagios
-    group: nagios
+    owner: root
+    group: root
     mode: "u=rw,g=r,o=r"
     become: True
 
@@ -123,8 +123,8 @@
   template:
     src: templates/api.conf.j2
     dest: "{{ icinga2_sysconf_dir }}/features-available/api.conf"
-    owner: nagios
-    group: nagios
+    owner: root
+    group: root
     mode: "u=rw,g=r,o=r"
     become: True
 
