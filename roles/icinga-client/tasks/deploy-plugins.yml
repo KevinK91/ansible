@@ -11,6 +11,19 @@
   become: yes
   tags:
     - deploy-plugins
+  when: ansible_distribution == "Centos"
+
+- copy: 
+    src: "{{ item }}" 
+    dest: "/usr/lib/nagios/plugins/"
+    owner: root 
+    group: root
+    mode: 0755
+  with_fileglob: "{{ plugin_dir }}"
+  become: yes
+  tags:
+    - deploy-plugins
+  when: ansible_distribution == "Ubuntu"
 
 #Postgresql related stuff
 - name: Install dependencies for check_postgresql.pl 
