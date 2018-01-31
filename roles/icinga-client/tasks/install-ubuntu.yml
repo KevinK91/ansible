@@ -2,7 +2,6 @@
 - shell: dpkg-query -W 'icinga2'
   ignore_errors: True
   register: is_statd
-  when: ansible_distribution == "Ubuntu"
 
 - name: Add an Apt signing key Icinga2
   apt_key:
@@ -16,7 +15,7 @@
      repo: deb http://packages.icinga.com/ubuntu icinga-xenial main
      state: present
      filename: 'icinga2'
-  when: and is_statd|failed
+  when: is_statd|failed
   become: yes
 
 - name: Install icinga2 with nagios plugins Ubuntu xenial
