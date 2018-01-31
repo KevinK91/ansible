@@ -105,6 +105,7 @@
     group: icinga
     mode: u=rw,g=r,o=r
 
+
 - name: Deploy zones.conf file
   template:
     src: templates/zones.conf.j2

@@ -101,14 +101,14 @@
   tags:
     - icinga2-ticket-request
 
-#- name: Deploy icinga2.conf file
-#  copy:
-#    src: files/icinga2.conf
-#    dest: "{{ icinga2_sysconf_dir }}/icinga2.conf"
-#    owner: root
-#    group: root
-#    mode: u=rw,g=r,o=r
-#    become: yes
+- name: Deploy icinga2.conf file
+  copy:
+    src: files/icinga2.conf
+    dest: "{{ icinga2_sysconf_dir }}/icinga2.conf"
+    owner: root
+    group: root
+    mode: u=rw,g=r,o=r
+  become: True
 
 - name: Deploy zones.conf file
   template:
@@ -117,7 +117,7 @@
     owner: root
     group: root
     mode: "u=rw,g=r,o=r"
-    become: True
+  become: True
 
 - name: Deploy api.conf file
   template:
@@ -126,7 +126,7 @@
     owner: root
     group: root
     mode: "u=rw,g=r,o=r"
-    become: True
+  become: True
 
 
 - name: restart icinga2 to activate the client
