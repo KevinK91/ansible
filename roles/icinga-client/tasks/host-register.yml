@@ -18,7 +18,7 @@
       Accept: "application/json"
     validate_certs: no
   delegate_to: "{{ icinga2_master_fqdn }}"
-  egister: result
+  register: result
   ignore_errors: True
   #failed_when: result.status != 200 or result.status != 404
 
