@@ -50,6 +50,7 @@
 
 - apt:
     deb: /tmp/libdata-dumper-simple-perl_0.11-5_all.deb
+  with_items:  "{{ plugin_dir }}"
   become: yes
   tags:
     - deploy-plugins
