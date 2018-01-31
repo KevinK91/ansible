@@ -1,4 +1,8 @@
 ---
+- shell:  "yum list installed icinga2"
+  ignore_errors: True
+  register: is_statd
+  when: ansible_distribution == "CentOS"
 
 - name: Add Icinga2 repository Centos7
   yum_repository:
@@ -10,7 +14,7 @@
   become: yes
   tags:
     - icinga2-packages
-  when: ansible_distribution == "CentOS"
+  when: ansible_distribution == "CentOS" and is_statd|failed
   
 - name: Install icinga2 with nagios plugins Centos7
   yum:
@@ -19,13 +23,18 @@
     enabled: yes
   with_items: "{{ icinga2_client_packages_centos }}"
   become: yes
-  when: ansible_distribution == "CentOS"
+  when: ansible_distribution == "CentOS" and is_statd|failed
+
+- shell: dpkg-query -W 'icinga2'
+  ignore_errors: True
+  register: is_statd
+  when: ansible_distribution == "Ubuntu"
 
 - name: Add an Apt signing key Icinga2
   apt_key:
     url: https://packages.icinga.com/icinga.key
     state: present
-  when: ansible_distribution == "Ubuntu"
+  when: ansible_distribution == "Ubuntu" and is_statd|failed
   become: yes
 
 - name: Add Icinga2 repository Ubuntu
@@ -33,7 +42,7 @@
      repo: deb http://packages.icinga.com/ubuntu icinga-xenial main
      state: present
      filename: 'icinga2'
-  when: ansible_distribution == "Ubuntu"
+  when: ansible_distribution == "Ubuntu" and is_statd|failed
   become: yes
 
 - name: Install icinga2 with nagios plugins Ubuntu xenial
@@ -43,7 +52,7 @@
     update_cache: yes
   with_items: "{{ icinga2_client_packages_ubuntu }}"
   become: yes
-  when: ansible_distribution == "Ubuntu"
+  when: ansible_distribution == "Ubuntu" and is_statd|failed
 
 
 - name: Enable api feature
