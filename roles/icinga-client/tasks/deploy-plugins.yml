@@ -25,6 +25,18 @@
     - deploy-plugins
   when: ansible_distribution == "Ubuntu"
 
+- copy: 
+    src: files/libdata-dumper-simple-perl_0.11-5_all.deb 
+    dest: "/tmp/"
+    owner: root 
+    group: root
+    mode: 0755
+  become: yes
+  tags:
+    - deploy-plugins
+  when: ansible_distribution == "Ubuntu"
+
+
 #Postgresql related stuff
 - name: Install dependencies for check_postgresql.pl 
   yum:
@@ -32,9 +44,16 @@
     state: present
   become: yes
   with_items:  "{{ plugin_dir }}"
-  when: item | search("postgres")
+  when: item | search("postgres") and  ansible_distribution == "Centos"
   tags:
     - deploy-plugins
+
+- apt:
+    deb: /tmp/libdata-dumper-simple-perl_0.11-5_all.deb
+  become: yes
+  tags:
+    - deploy-plugins
+  when: item | search("postgres") and ansible_distribution == "Ubuntu"
 
 #Postgresql related stuff
 - name: Install dependencies for check_repmgr 
@@ -43,7 +62,7 @@
     state: present
   become: yes
   with_items:  "{{ plugin_dir }}"
-  when: item | search("postgres")
+  when: item | search("postgres") and  ansible_distribution == "Centos"
   tags:
     - deploy-plugins
 
