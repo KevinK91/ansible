@@ -53,7 +53,7 @@
   become: yes
   tags:
     - deploy-plugins
-  when: item | search("postgres") and ansible_distribution == "Ubuntu"
+  when: (item | search("postgres")) and ansible_distribution == "Ubuntu"
 
 #Postgresql related stuff
 - name: Install dependencies for check_repmgr 
