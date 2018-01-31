@@ -67,6 +67,18 @@
 - name: Create pki directory for Icinga2
   file:
     path: /etc/icinga2/pki
+    owner: nagios
+    group: nagios
+    state: directory
+    mode: 0750
+  become: yes
+  tags:
+    - icinga2-client-certificate
+  when: ansible_distribution == "Ubuntu"
+
+- name: Create pki directory for Icinga2
+  file:
+    path: /etc/icinga2/pki
     owner: icinga
     group: icinga
     state: directory
@@ -74,6 +86,7 @@
   become: yes
   tags:
     - icinga2-client-certificate
+  when: ansible_distribution == "CentOS" 
 
 - name: Create client certificate
   command: >
