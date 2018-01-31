@@ -108,7 +108,7 @@
     owner: root
     group: root
     mode: u=rw,g=r,o=r
-    become: True
+    become: yes
 
 - name: Deploy zones.conf file
   template:
