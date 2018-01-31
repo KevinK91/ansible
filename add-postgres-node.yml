@@ -71,7 +71,7 @@
 - hosts: "{{ witness_server }}"
   tasks:
   - name: Update witness postgresql instance on host "{{ inventory_hostname }}"
-    shell: ' repmgr -f /etc/repmgr/10/repmgr.conf witness register -h {{ old_master_ip }} -F'
+    shell: ' repmgr -f /etc/repmgr/10/repmgr.conf witness register -h {{ old_master }} -F'
     register: cmd
     failed_when: cmd.rc >= 2
     become: true
