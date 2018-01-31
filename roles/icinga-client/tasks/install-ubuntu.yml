@@ -108,6 +108,7 @@
     owner: nagios
     group: nagios
     mode: u=rw,g=r,o=r
+    become: True
 
 - name: Deploy zones.conf file
   template:
@@ -116,6 +117,7 @@
     owner: nagios
     group: nagios
     mode: "u=rw,g=r,o=r"
+    become: True
 
 - name: Deploy api.conf file
   template:
@@ -124,11 +126,12 @@
     owner: nagios
     group: nagios
     mode: "u=rw,g=r,o=r"
+    become: True
 
 
 - name: restart icinga2 to activate the client
   systemd:
     name: icinga2
     state: restarted
-  become: yes
+  become: True
 
