@@ -30,10 +30,11 @@ def repmgr_check(args):
     cmd = '/usr/bin/repmgr node check -f ' + args.file + ' --nagios --' + args.action
     try: 
         proc = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-        print proc.communicate()[0]
+        result = proc.communicate()[0]
+        print result
         if proc.wait() == 6:
             sys.exit(2)
-        if args.rolestate not in proc.communicate()[0]:
+        if args.rolestate not in result:
             sys.exit(2)
         sys.exit(proc.wait())
     except OSError, error:
