@@ -29,7 +29,7 @@ def arg_pars():
 def repmgr_check(args):
     cmd = '/usr/bin/repmgr node check -f ' + args.file + ' --nagios --' + args.action
     try: 
-        proc = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE, stderr=subprocess.STDOUT))
+        proc = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         print proc.communicate()[0]
         if proc.wait() == 6:
             sys.exit(2)
