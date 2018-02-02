@@ -2,6 +2,8 @@
 
 - debug:
     msg: "Das ist die distro {{ ansible_distribution }}"
+  tags:
+    - deploy-plugins
 
 
 - name: Deploy the plugins
