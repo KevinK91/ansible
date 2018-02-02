@@ -9,9 +9,9 @@ from pwd import getpwnam
 
 def arg_pars():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-u', action='store', dest='user', default='postgres',
-                    help='To execute the replication commands on localhost\
-                   Default user is postgres')
+    parser.add_argument('-rs', action='store', dest='rolestate', 
+                    help='This parameter is only needed if the action is role\
+                   primary or standby are allowed')
     parser.add_argument('-f', action='store', dest='file', default='/etc/repmgr/10/repmgr.conf',
                     help=' Defines the replication configuration file\
                    Default is /etc/repmgr/10/repmgr.conf')
@@ -24,23 +24,16 @@ def arg_pars():
                   slots: checks there are no inactive replication slots')
     return parser.parse_args()
 
-def demote(user):
-    """Pass the function 'set_ids' to preexec_fn, rather than just calling
-    setuid and setgid. This will change the ids for that subprocess only"""
-
-    def set_ids():
-        os.setgid(getpwnam(user).pw_gid)
-        os.setuid(getpwnam(user).pw_uid)
-
-    return set_ids
 
 
 def repmgr_check(args):
     cmd = '/usr/bin/repmgr node check -f ' + args.file + ' --nagios --' + args.action
     try: 
-        proc = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, preexec_fn=demote(args.user))
+        proc = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE, stderr=subprocess.STDOUT))
         print proc.communicate()[0]
         if proc.wait() == 6:
+            sys.exit(2)
+        if args.rolestate not in proc.communicate()[0]:
             sys.exit(2)
         sys.exit(proc.wait())
     except OSError, error:
