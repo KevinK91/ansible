@@ -18,3 +18,9 @@
 
 - import_tasks: install-ubuntu.yml
   when: ansible_distribution == "Ubuntu" 
+
+- name: Deploy the plugins 
+  import_tasks: deploy-plugins.yml
+  tags:
+    - deploy-plugins
+
