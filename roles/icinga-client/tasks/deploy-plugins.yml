@@ -1,5 +1,9 @@
 ---
 
+- debug:
+    msg: Das ist die distro "{{ ansible_distribution }}"
+
+
 - name: Deploy the plugins
   copy: 
     src: "{{ item }}" 
