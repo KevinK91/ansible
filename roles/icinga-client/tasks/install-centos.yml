@@ -3,7 +3,7 @@
   ignore_errors: True
   register: is_statd
 
-- name: Add Icinga2 repository Centos7
+- name: Add Icinga2 repository CentOS7
   yum_repository:
     name: icinga
     description: Icinga2 repository
@@ -15,7 +15,7 @@
     - icinga2-packages
   when: is_statd|failed
   
-- name: Install icinga2 with nagios plugins Centos7
+- name: Install icinga2 with nagios plugins CentOS7
   yum:
     name: "{{ item }}"
     state: latest
