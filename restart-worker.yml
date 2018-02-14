@@ -1,5 +1,5 @@
 ---
-- hosts: sasrtdm
+- hosts: all
   vars:
     kill_user: 
       - "sas-install"
