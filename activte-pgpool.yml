@@ -1,0 +1,28 @@
+
+- hosts:  pgpool
+  tasks:
+  - name: Activate backend node on host "{{ inventory_hostname }}"
+    shell: 'pcp_attach_node -h localhost -U pgpool -w -n {{ backend_node }}'
+    register: cmd
+    failed_when: cmd.rc != 0
+    tags:
+      - activate
+
+  - name: Stop pgpool service
+    systemd:
+      name: pgpool
+      state: stopped
+    become: true
+    when: cmd.rc != 0
+    tags:
+      - stop
+
+  - name: Start pgpool service
+    systemd:
+      name: pgpool
+      state: started
+    become: true
+    when: cmd.rc != 0
+    tags:
+      - start
+
