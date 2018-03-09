@@ -4,7 +4,7 @@
   - name: Activate backend node on host "{{ inventory_hostname }}"
     shell: 'pcp_attach_node -h localhost -U pgpool -w -n {{ backend_node }}'
     register: cmd
-    failed_when: cmd.rc != 0 or '"Command Successful" not in cmd.stdout'
+    failed_when: cmd.rc != 0 or '"pcp_attach_node -- Command Successful" not in cmd.stdout'
     tags:
       - activate
 
