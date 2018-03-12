@@ -23,5 +23,5 @@
     register: portcheck
 
   - debug:
-      msg: "{{ protcheck.state }}"
+      msg: "{{ portcheck.state }}"
 
