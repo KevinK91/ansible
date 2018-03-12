@@ -1,4 +1,5 @@
- - hosts: "{{ new_master }}"
+--- 
+- hosts: "{{ new_master }}"
   tasks:
   - name: Check if postgresql is primary on host "{{ new_master }}" and the failover worked
     shell: '/usr/bin/repmgr node check -f /etc/repmgr/10/repmgr.conf --nagios --role | grep -i primary'
@@ -6,21 +7,21 @@
     become_user: postgres
     register: new_master
 
-- name: End the playbook if a postgresl failover occured because works correctly then
-  meta: end_play
-  when: new_master.rc = 0 
+  - name: End the playbook if a postgresl failover occured because works correctly then
+    meta: end_play
+   when: new_master.rc = 0 
 
 
-- name: Check all port numbers are accessible from current host
-  wait_for:
-    host: mywebserver.com
-    port: 5432
-    state: started         # Port should be open
-    delay: 0               # No wait before first check (sec)
-    timeout: 3             # Stop checking after timeout (sec)
-  ignore_errors: yes
-  register: portcheck
+  - name: Check all port numbers are accessible from current host
+    wait_for:
+     host: mywebserver.com
+     port: 5432
+     state: started         # Port should be open
+     delay: 0               # No wait before first check (sec)
+     timeout: 3             # Stop checking after timeout (sec)
+    ignore_errors: yes
+    register: portcheck
 
-- debug:
-    msg: "{{ protcheck.rc }}"
+  - debug:
+      msg: "{{ protcheck.rc }}"
 
