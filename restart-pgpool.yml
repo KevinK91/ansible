@@ -2,15 +2,14 @@
 - hosts: "{{ slave }}"
   tasks:
   - name: Check if postgresql is primary on host "{{ slave }}" and the failover worked
-    shell: '/usr/bin/repmgr node check -f /etc/repmgr/10/repmgr.conf --nagios --role | grep -i standby'
+    shell: '/usr/bin/repmgr node check -f /etc/repmgr/10/repmgr.conf --nagios --role | grep -i primary'
     become: true
     become_user: postgres
     register: slave
-    failed_when: slave.rc != 0
-
+  
   - name: End the playbook if a postgresl failover occured because works correctly then
     meta: end_play
-    when: slave.rc = 0 
+    when: slave.rc != 0 
 
 
   - name: Check all port numbers are accessible from current host
