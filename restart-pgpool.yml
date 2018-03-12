@@ -5,11 +5,11 @@
     shell: '/usr/bin/repmgr node check -f /etc/repmgr/10/repmgr.conf --nagios --role'
     become: true
     become_user: postgres
-    register: slave
+    register: slave_check
   
   - name: End the playbook if a postgresl failover occured because works correctly then
     meta: end_play
-    when: slave.stdout  | join('') | search('standby')
+    when: slave_check.stdout | join('') | search('standby')
 
 
   - name: Check all port numbers are accessible from current host
