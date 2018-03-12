@@ -1,5 +1,5 @@
 --- 
-- hosts: "{{ new_master }}"
+- hosts: "{{ slave }}"
   tasks:
   - name: Check if postgresql is primary on host "{{ new_master }}" and the failover worked
     shell: '/usr/bin/repmgr node check -f /etc/repmgr/10/repmgr.conf --nagios --role | grep -i primary'
@@ -14,7 +14,7 @@
 
   - name: Check all port numbers are accessible from current host
     wait_for:
-     host: mywebserver.com
+     host: "{{ master }}"
      port: 5432
      state: started         # Port should be open
      delay: 0               # No wait before first check (sec)
