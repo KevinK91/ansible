@@ -9,7 +9,7 @@
   
   - name: End the playbook if a postgresl failover occured because works correctly then
     meta: end_play
-    when: slave_check.stdout | join('') | search('standby')
+    when: slave_check.stdout | join('') | search('primary')
 
 
   - name: Check all port numbers are accessible from current host
