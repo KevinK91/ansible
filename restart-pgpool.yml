@@ -9,7 +9,7 @@
 
   - name: End the playbook if a postgresl failover occured because works correctly then
     meta: end_play
-   when: new_master.rc = 0 
+    when: new_master.rc = 0 
 
 
   - name: Check all port numbers are accessible from current host
