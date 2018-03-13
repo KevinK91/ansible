@@ -8,18 +8,18 @@
     register: slave_check
   
   - debug:
-      msg: End the playbook if a postgresl failover occured because pgpool works correctly then
+      msg: The playbook stops now because the slave is the new master see "{{ slave_check.stdout }}" and pgpool has to deactivate the backend node to prevent a split brain.
     when: slave_check.stdout | join('') | search('standby')
 
   - meta: end_play
-    when: slave_check.stdout | join('') | search('standby')
-  - debug:
-      msg: End the playbook if a postgresl failover occured because pgpool works correctly then
     when: slave_check.stdout | join('') | search('standby')
 
 
 - hosts: pgpool
   tasks:
+  - meta: end_play
+    when: slave_check.stdout | join('') | search('standby')
+  
   - name: Check all port numbers are accessible from current host
     wait_for:
      host: "{{ master }}"
