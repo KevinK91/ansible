@@ -30,7 +30,7 @@
   - debug:
       msg: "{{ portcheck.state }}"
 
- - name: Activate backend node on host "{{ inventory_hostname }}"
+  - name: Activate backend node on host "{{ inventory_hostname }}"
     shell: 'pcp_attach_node -h localhost -U pgpool -w -n {{ backend_node }}'
     register: cmd
     failed_when: cmd.rc != 0 or cmd.stdout != "pcp_attach_node -- Command Successful"
