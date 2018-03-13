@@ -7,11 +7,16 @@
     become_user: postgres
     register: slave_check
   
-  - name: End the playbook if a postgresl failover occured because works correctly then
-    meta: end_play
-    when: slave_check.stdout | join('') | search('primary')
+  - debug:
+      msg: End the playbook if a postgresl failover occured because pgpool works correctly then
+    when: slave_check.stdout | join('') | search('standby')
+
+  - meta: end_play
+    when: slave_check.stdout | join('') | search('standby')
 
 
+- hosts: pgpool
+  tasks:
   - name: Check all port numbers are accessible from current host
     wait_for:
      host: "{{ master }}"
@@ -24,4 +29,12 @@
 
   - debug:
       msg: "{{ portcheck.state }}"
+
+ - name: Activate backend node on host "{{ inventory_hostname }}"
+    shell: 'pcp_attach_node -h localhost -U pgpool -w -n {{ backend_node }}'
+    register: cmd
+    failed_when: cmd.rc != 0 or cmd.stdout != "pcp_attach_node -- Command Successful"
+    when: protcheck.state = "started"
+    tags:
+      - activate
 
