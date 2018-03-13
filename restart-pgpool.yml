@@ -13,6 +13,9 @@
 
   - meta: end_play
     when: slave_check.stdout | join('') | search('standby')
+  - debug:
+      msg: End the playbook if a postgresl failover occured because pgpool works correctly then
+    when: slave_check.stdout | join('') | search('standby')
 
 
 - hosts: pgpool
